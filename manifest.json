@@ -1,11 +1,10 @@
 {
-	"id": "sample-plugin",
-	"name": "Sample Plugin",
-	"version": "1.0.0",
+	"id": "update-plugins-paths",
+	"name": "Update Plugins Paths",
+	"version": "0.1.0",
 	"minAppVersion": "0.15.0",
-	"description": "Demonstrates some of the capabilities of the Obsidian API.",
-	"author": "Obsidian",
-	"authorUrl": "https://obsidian.md",
-	"fundingUrl": "https://obsidian.md/pricing",
+	"description": "Bulk-update hardcoded folder paths across all installed plugins when your vault structure changes.",
+	"author": "Brian Rohde",
+	"authorUrl": "https://github.com/brianrohde",
 	"isDesktopOnly": false
 }

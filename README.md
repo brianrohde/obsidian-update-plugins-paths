@@ -1,90 +1,169 @@
-# Obsidian Sample Plugin
+# Obsidian Update Plugins Paths
 
-This is a sample plugin for Obsidian (https://obsidian.md).
+A powerful Obsidian plugin that helps users bulk-update hardcoded folder and file path references across all installed plugins when their vault structure changes.
 
-This project uses TypeScript to provide type checking and documentation.
-The repo depends on the latest plugin API (obsidian.d.ts) in TypeScript Definition format, which contains TSDoc comments describing what it does.
+## Problem
 
-This sample plugin demonstrates some of the basic functionality the plugin API can do.
-- Adds a ribbon icon, which shows a Notice when clicked.
-- Adds a command "Open modal (simple)" which opens a Modal.
-- Adds a plugin setting tab to the settings page.
-- Registers a global click event and output 'click' to the console.
-- Registers a global interval which logs 'setInterval' to the console.
+When you reorganize your Obsidian vault (move folders, rename directories, restructure your layout), many community plugins break because they store hardcoded path references in their configuration files. Instead of manually updating each plugin's settings one by one, this plugin lets you find and replace paths across multiple plugins at once.
 
-## First time developing plugins?
+## Features
 
-Quick starting guide for new plugin devs:
+### Phase 1 (MVP)
 
-- Check if [someone already developed a plugin for what you want](https://obsidian.md/plugins)! There might be an existing plugin similar enough that you can partner up with.
-- Make a copy of this repo as a template with the "Use this template" button (login to GitHub if you don't see it).
-- Clone your repo to a local development folder. For convenience, you can place this folder in your `.obsidian/plugins/your-plugin-name` folder.
-- Install NodeJS, then run `npm i` in the command line under your repo folder.
-- Run `npm run dev` to compile your plugin from `main.ts` to `main.js`.
-- Make changes to `main.ts` (or create new `.ts` files). Those changes should be automatically compiled into `main.js`.
-- Reload Obsidian to load the new version of your plugin.
-- Enable plugin in settings window.
-- For updates to the Obsidian API run `npm update` in the command line under your repo folder.
+- **Plugin Discovery** — Scans all installed core and community plugins for path-related settings
+  - Manual registry of known plugins and their path fields
+  - Heuristic scanning to detect path-like patterns in plugin configs
+  - User can manually add custom path field mappings
+  
+- **Intelligent Path Autocomplete** — As you type the new path, get real-time suggestions
+  - Fuzzy match against existing folders in your vault
+  - Shows relative paths by default (toggle to absolute)
+  - Option to create brand new paths
+  - Auto-creates the folder when confirmed (with option to skip)
+  
+- **Preview & Selective Apply** — Review changes before committing
+  - See a preview of all JSON changes across plugins
+  - Enable/disable which plugins get updated via checkboxes
+  - Automatic backup created before applying
+  - Cancel anytime
 
-## Releasing new releases
+### Phase 2 (Planned)
 
-- Update your `manifest.json` with your new version number, such as `1.0.1`, and the minimum Obsidian version required for your latest release.
-- Update your `versions.json` file with `"new-plugin-version": "minimum-obsidian-version"` so older versions of Obsidian can download an older version of your plugin that's compatible.
-- Create new GitHub release using your new version number as the "Tag version". Use the exact version number, don't include a prefix `v`. See here for an example: https://github.com/obsidianmd/obsidian-sample-plugin/releases
-- Upload the files `manifest.json`, `main.js`, `styles.css` as binary attachments. Note: The manifest.json file must be in two places, first the root path of your repository and also in the release.
-- Publish the release.
+- Scan and update hardcoded paths in plugin source code (`main.js`)
 
-> You can simplify the version bump process by running `npm version patch`, `npm version minor` or `npm version major` after updating `minAppVersion` manually in `manifest.json`.
-> The command will bump version in `manifest.json` and `package.json`, and add the entry for the new version to `versions.json`
+### Phase 3 (Planned)
 
-## Adding your plugin to the community plugin list
+- Bulk find/replace broken links and image paths in vault notes
 
-- Check the [plugin guidelines](https://docs.obsidian.md/Plugins/Releasing/Plugin+guidelines).
-- Publish an initial version.
-- Make sure you have a `README.md` file in the root of your repo.
-- Make a pull request at https://github.com/obsidianmd/obsidian-releases to add your plugin.
+## Installation
 
-## How to use
+### Community Plugins
 
-- Clone this repo.
-- Make sure your NodeJS is at least v16 (`node --version`).
-- `npm i` or `yarn` to install dependencies.
-- `npm run dev` to start compilation in watch mode.
+Once released, install from Obsidian's community plugins browser:
+1. Open Settings → Community plugins → Browse
+2. Search for "Update Plugins Paths"
+3. Install and enable
 
-## Manually installing the plugin
+### Manual Installation (Development)
 
-- Copy over `main.js`, `styles.css`, `manifest.json` to your vault `VaultFolder/.obsidian/plugins/your-plugin-id/`.
+1. Clone this repo into your vault: `.obsidian/plugins/obsidian-update-plugins-paths/`
+2. Run `npm i` to install dependencies
+3. Run `npm run dev` to compile
+4. In Obsidian, enable the plugin in Settings → Community plugins
 
-## Improve code quality with eslint
-- [ESLint](https://eslint.org/) is a tool that analyzes your code to quickly find problems. You can run ESLint against your plugin to find common bugs and ways to improve your code. 
-- This project already has eslint preconfigured, you can invoke a check by running`npm run lint`
-- Together with a custom eslint [plugin](https://github.com/obsidianmd/eslint-plugin) for Obsidan specific code guidelines.
-- A GitHub action is preconfigured to automatically lint every commit on all branches.
+## How to Use
 
-## Funding URL
+1. Open the command palette and search for "Update Plugins Paths" (or click the ribbon icon)
+2. The plugin scans your installed plugins and displays detected path settings
+3. Enter the old path you want to replace (autocomplete helps find existing folders)
+4. Enter the new path you want to replace it with (autocomplete suggests matching folders)
+5. Review the list of plugins that will be updated — toggle each one on/off as needed
+6. Click "Preview" to see exactly what will change
+7. Click "Apply" to update all selected plugins
+8. A backup is automatically created at `.obsidian/plugin-configs-backup-[timestamp].json`
 
-You can include funding URLs where people who use your plugin can financially support it.
+## Configuration
 
-The simple way is to set the `fundingUrl` field to your link in your `manifest.json` file:
+Plugin settings include:
+
+- **Show Hidden Folders in Autocomplete** — Toggle visibility of `.obsidian`, `.git`, etc. (off by default)
+- **Path Format** — Choose relative (default) or absolute paths
+- **Auto-create Folders** — Automatically create new folders when you add a new path (on by default)
+
+## Plugin Registry
+
+The plugin includes a curated registry of known Obsidian plugins and their path-related settings:
+
+- Dataview, Templater, Daily Notes, Obsidian Git, Excalibrain, Breadcrumbs, etc.
+
+The registry is designed to be extended as new plugins are discovered. User-added custom path mappings are persisted across sessions.
+
+## Safety
+
+- **Backup on Apply** — An automatic backup of all affected plugin configs is created before any changes
+- **Preview Mode** — Always review what will change before applying
+- **Selective Enable/Disable** — Choose exactly which plugins get updated
+- **No Vault Content Changes (Phase 1)** — Only affects plugin configuration, not your actual notes
+
+## Development
+
+### Setup
+
+```bash
+npm i              # Install dependencies
+npm run dev        # Watch mode (auto-compile on changes)
+npm run build      # Production build
+npm run lint       # Run ESLint
+```
+
+### Project Structure
+
+- `src/main.ts` — Main plugin entry point
+- `src/settings.ts` — Settings tab UI
+- `manifest.json` — Plugin metadata
+- `esbuild.config.mjs` — Build configuration
+- `eslint.config.mts` — Linting rules
+
+### Plugin Registration
+
+To add a new plugin to the manual registry, edit the registry file (TBD) and add:
 
 ```json
 {
-    "fundingUrl": "https://buymeacoffee.com"
+  "id": "plugin-id",
+  "name": "Plugin Name",
+  "pathFields": ["field1", "field2"]
 }
 ```
 
-If you have multiple URLs, you can also do:
+### Roadmap
 
-```json
-{
-    "fundingUrl": {
-        "Buy Me a Coffee": "https://buymeacoffee.com",
-        "GitHub Sponsor": "https://github.com/sponsors",
-        "Patreon": "https://www.patreon.com/"
-    }
-}
+1. **Phase 1 (MVP)** — Plugin discovery + path autocomplete + find/replace
+2. **Phase 2** — Source code path scanning (main.js)
+3. **Phase 3** — Vault note link/reference fixing
+
+## Contributing
+
+Contributions welcome! Please:
+
+1. Test in development mode (`npm run dev`)
+2. Ensure linting passes (`npm run lint`)
+3. For new plugins in the registry, verify path field names are correct
+
+## License
+
+BSD 0-Clause (See LICENSE file)
+
+## Support
+
+For issues, feature requests, or plugin registry additions, please open an issue on GitHub.
+
+---
+
+Made with ❤️ for Obsidian users who reorganize their vaults
+
+
+# Project Tree
 ```
+obsidian-update-plugins-paths
+├─ .editorconfig
+├─ .npmrc
+├─ AGENTS.md
+├─ LICENSE
+├─ esbuild.config.mjs
+├─ eslint.config.mts
+├─ manifest.json
+├─ package-lock.json
+├─ package.json
+├─ src
+│  ├─ main.ts
+│  └─ settings.ts
+├─ styles.css
+├─ tsconfig.json
+├─ version-bump.mjs
+├─ versions.json
+├─ CLAUDE.md
+├─ README.md
+└─ IMPLEMENTATION_PLAN.md
 
-## API Documentation
-
-See https://docs.obsidian.md
+```
