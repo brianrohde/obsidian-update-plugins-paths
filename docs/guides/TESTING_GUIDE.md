@@ -6,8 +6,6 @@
 
 ```bash
 npm run build    # Production build
-# or
-npm run dev      # Watch mode (auto-recompiles on file changes)
 ```
 
 Output files:
@@ -15,40 +13,43 @@ Output files:
 - `manifest.json` — Plugin metadata
 - `styles.css` — Plugin styles
 
-### 2. Install in Obsidian Dev Vault
+### 2. Copy to Dev Vault and Test
 
-There are two ways to test:
+**Dev Vault Location:** `C:\Local Documents\Obsidian\DEV VAULT`
 
-#### Option A: Direct File Copy (Recommended for MVP Testing)
-
-1. **Create a test vault** in Obsidian (File → New vault)
-2. **Copy plugin files** to `.obsidian/plugins/update-plugins-paths/`:
-   ```bash
-   # From Windows PowerShell or CMD
-   mkdir path\to\vault\.obsidian\plugins\update-plugins-paths
-   copy main.js path\to\vault\.obsidian\plugins\update-plugins-paths\
-   copy manifest.json path\to\vault\.obsidian\plugins\update-plugins-paths\
-   copy styles.css path\to\vault\.obsidian\plugins\update-plugins-paths\
-   ```
-
-3. **Enable the plugin**:
-   - Open Obsidian settings
-   - Go to Community plugins (or Plugins if it's in that section)
-   - Find "Update Plugins Paths" and toggle it on
-   - You should see a refresh icon in the left ribbon
-
-#### Option B: Symlink (For Live Development)
-
-If you want live reloading as you change code:
+**Quick Copy Script (PowerShell):**
 
 ```powershell
-# PowerShell (run as admin)
-New-Item -ItemType SymbolicLink `
-  -Path "C:\Users\YourName\AppData\Roaming\Obsidian\Obsidian\update-plugins-paths" `
-  -Target "Z:\_dev-ssd\obsidian-update-plugins-paths"
+# Run after each build
+$devVaultPluginsDir = "C:\Local Documents\Obsidian\DEV VAULT\.obsidian\plugins\update-plugins-paths"
+if (-not (Test-Path $devVaultPluginsDir)) { New-Item -ItemType Directory -Force $devVaultPluginsDir }
+Copy-Item -Path "Z:\_dev-ssd\obsidian-update-plugins-paths\main.js", "Z:\_dev-ssd\obsidian-update-plugins-paths\manifest.json", "Z:\_dev-ssd\obsidian-update-plugins-paths\styles.css" -Destination $devVaultPluginsDir -Force
+Write-Host "✓ Plugin updated in dev vault"
 ```
 
-Then run `npm run dev` and Obsidian will auto-reload changes.
+**Save this as `copy-to-dev.ps1` in your plugin root for easy access.**
+
+### 3. Test in Obsidian
+
+1. **Open Obsidian** and navigate to your **DEV VAULT**
+2. **Enable the plugin:**
+   - Settings → Community plugins → Find "Update Plugins Paths" → Toggle ON
+3. **Reload plugins:**
+   - Settings → Community plugins → Click reload icon
+   - Or Command Palette → "Reload plugins without saving"
+4. **Verify pre-release indicator:**
+   - Settings → "Update Plugins Paths" tab
+   - Should show: "Testing Pre-Release 0.1.0" at the top
+
+### 4. Workflow for Development
+
+1. Make code changes in TypeScript files
+2. Run `npm run build`
+3. Run `copy-to-dev.ps1` (or the PowerShell command above)
+4. In Obsidian: Reload plugins
+5. Test the feature
+
+**Tip:** To verify the plugin reloaded, check that the version notice updated (if you changed the version).
 
 ---
 

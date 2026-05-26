@@ -29,6 +29,10 @@ export class UpdatePathsSettingTab extends PluginSettingTab {
 		const { containerEl } = this;
 		containerEl.empty();
 
+		const versionEl = containerEl.createEl('div', { cls: 'version-notice' });
+		versionEl.createEl('p', { text: `Testing Pre-Release ${this.plugin.manifest.version}` });
+		versionEl.createEl('p', { text: 'This is a development build. Thank you for testing!' });
+
 		new Setting(containerEl).setHeading().setName('General');
 
 		new Setting(containerEl)
