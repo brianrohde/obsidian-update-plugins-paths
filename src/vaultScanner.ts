@@ -1,4 +1,4 @@
-import { App, TFolder, TFile } from 'obsidian';
+import { App, TFolder } from 'obsidian';
 
 export class VaultScanner {
 	private vaultFolders: string[] = [];
@@ -15,7 +15,7 @@ export class VaultScanner {
 
 	private async recursiveGetFolders(folder: TFolder, includeHidden: boolean): Promise<string[]> {
 		const paths: string[] = [];
-		const skip = ['.obsidian', '.git'];
+		const skip = [this.app.vault.configDir, '.git'];
 
 		for (const child of folder.children) {
 			if (child instanceof TFolder) {

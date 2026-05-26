@@ -18,7 +18,7 @@ export class PluginDataScanner {
 	}
 
 	async scanAllPlugins(): Promise<PluginDataWithPaths[]> {
-		const pluginsDir = '.obsidian/plugins';
+		const pluginsDir = `${this.app.vault.configDir}/plugins`;
 		const results: PluginDataWithPaths[] = [];
 
 		try {
@@ -31,13 +31,13 @@ export class PluginDataScanner {
 				const dataFile = `${dir}/data.json`;
 				try {
 					const dataContent = await this.app.vault.adapter.read(dataFile);
-					const data = JSON.parse(dataContent);
+					const data = JSON.parse(dataContent) as Record<string, unknown>;
 
 					const result = await this.analyzePluginData(pluginId, data);
 					if (Object.keys(result.detectedSettings).length > 0) {
 						results.push(result);
 					}
-				} catch (e) {
+				} catch {
 					// Plugin has no data.json or can't parse — skip
 				}
 			}
@@ -50,7 +50,7 @@ export class PluginDataScanner {
 
 	private async analyzePluginData(
 		pluginId: string,
-		data: Record<string, any>
+		data: Record<string, unknown>
 	): Promise<PluginDataWithPaths> {
 		const registryMatch = this.findInRegistry(pluginId);
 		const detected: Record<string, string> = {};
@@ -80,7 +80,7 @@ export class PluginDataScanner {
 		};
 	}
 
-	private heuristicScan(data: Record<string, any>): Record<string, string> {
+	private heuristicScan(data: Record<string, unknown>): Record<string, string> {
 		const pathLikePattern = /\//;
 		const detected: Record<string, string> = {};
 

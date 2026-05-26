@@ -1,7 +1,7 @@
 import { App, PluginSettingTab, Setting } from "obsidian";
 import UpdatePluginsPathsPlugin from "./main";
 
-export interface MyPluginSettings {
+export interface UpdatePathsPluginSettings {
 	showHiddenFolders: boolean;
 	pathFormat: 'relative' | 'absolute';
 	autoCreateFolders: boolean;
@@ -10,14 +10,14 @@ export interface MyPluginSettings {
 	};
 }
 
-export const DEFAULT_SETTINGS: MyPluginSettings = {
+export const DEFAULT_SETTINGS: UpdatePathsPluginSettings = {
 	showHiddenFolders: false,
 	pathFormat: 'relative',
 	autoCreateFolders: true,
 	customPathMappings: {}
 }
 
-export class SampleSettingTab extends PluginSettingTab {
+export class UpdatePathsSettingTab extends PluginSettingTab {
 	plugin: UpdatePluginsPathsPlugin;
 
 	constructor(app: App, plugin: UpdatePluginsPathsPlugin) {
@@ -29,11 +29,11 @@ export class SampleSettingTab extends PluginSettingTab {
 		const { containerEl } = this;
 		containerEl.empty();
 
-		containerEl.createEl('h2', { text: 'Update Plugins Paths Settings' });
+		new Setting(containerEl).setHeading().setName('General');
 
 		new Setting(containerEl)
 			.setName('Show hidden folders')
-			.setDesc('Include .obsidian, .git and other hidden folders in path autocomplete')
+			.setDesc(`Include ${this.app.vault.configDir}, .git and other hidden folders in path autocomplete`)
 			.addToggle(toggle => toggle
 				.setValue(this.plugin.settings.showHiddenFolders)
 				.onChange(async (value) => {
